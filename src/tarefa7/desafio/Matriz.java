@@ -8,18 +8,28 @@ import java.util.stream.LongStream;
 
 public class Matriz {
     private final List<List<Long>> matrix;
-    private final int x;
-    private final int y;
+    private int x;
+    private int y;
 
     public Matriz(int x, int y){
         this.x = x;
         this.y = y;
         Random random = new Random();
-        matrix = LongStream.range(0, x).parallel()
+        matrix = LongStream.range(0, x)
                 .mapToObj(i -> LongStream.range(0, y)
                         .mapToObj(j -> random.nextLong(100))
                         .collect(Collectors.toList()))
                 .collect(Collectors.toList());
+    }
+
+    public Matriz(List<List<Long>> matrix){
+        this.matrix = matrix;
+        this.x = matrix.size();
+        this.y = matrix.get(0).size();
+    }
+
+    public Matriz(){
+        this.matrix = new ArrayList<>();
     }
 
     public List<Long> getRow(int x){
@@ -32,6 +42,20 @@ public class Matriz {
             column.add(row.get(y));
         }
         return column;
+    }
+
+    private List<List<Long>> toList(){
+        return this.matrix.stream().toList();
+    }
+
+    public void join(Matriz subMatriz){
+        this.matrix.addAll(subMatriz.toList());
+        this.x = this.matrix.size();
+        this.y = this.matrix.get(0).size();
+    }
+
+    public Matriz subMatriz(int start, int end){
+        return new Matriz(this.matrix.subList(start, end));
     }
 
     public void setValue(int x, int y, long value){
